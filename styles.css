@@ -60,6 +60,8 @@ body {
 
 .comment-text {
   font-size: 32px;
+  cursor: pointer;
+  white-space: pre-line;
 }
 
 .likes {

@@ -18,7 +18,7 @@ const comments = [
         likes: 75,
         data: "13.02.22 19:22",
         paint: "-active-like",
-        userLike: true
+        userLike: true,
     },
 ];
 
@@ -31,7 +31,7 @@ const renderComments = () => {
       <div>${comment.data}</div>
     </div>
     <div class="comment-body">
-      <div class="comment-text"> ${comment.text}</div>
+      <div class="comment-text" data-index='${index}'> ${comment.text}</div>
     </div>
     <div class="comment-footer">
       <div class="likes">
@@ -61,8 +61,18 @@ const renderComments = () => {
             renderComments()
         });
     }
+    answerEvent()
 };
 
+const answerEvent = () => {
+    const answerCommElements = document.querySelectorAll(".comment-text");
+    for (const answerCommElement of answerCommElements) {
+        answerCommElement.addEventListener("click", () => {
+            const index = answerCommElement.dataset.index;
+            textareaElement.value = `> ${comments[index].text} \n${comments[index].name}`;
+        })
+    }
+}
 renderComments();
 
 const locale = "ru-RU";
@@ -81,8 +91,8 @@ buttonElement.addEventListener("click", () => {
     }
 
     comments.push({
-        name: `${inputNameElement.value}`,
-        text: `${textareaElement.value}`,
+        name: `${inputNameElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt')}`,
+        text: `${textareaElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt')}`,
         data: `${date.toLocaleString(locale, todayData)} ${date.toLocaleTimeString(locale, todayTime)}`,
         likes: 0,
         paint: '',
