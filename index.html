@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Проект "Комменты"</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <section class="container">
+  <main class="container">
     <ul class="comments" id="comment-list">
       <!--список в JS-->
     </ul>
+    <!--<div id="addComments" class="add-comm -display-none">
+        <p id="add-comm-text">Комментарий добавляется...</p>
+      </div>-->
     <article class="add-form">
       <input id="input-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="textarea-form" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
@@ -24,7 +25,7 @@
         <button class="add-form-button" id="button-form">Написать</button>
       </div>
     </article>
-  </section>
+  </main>
   <style>
     .error {
       background-color: #df6c6c;
