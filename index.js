@@ -5,10 +5,10 @@ const commentListElement = document.getElementById("comment-list");
 // const addCommText = document.getElementById('addComments');
 // const addCommElement = document.getElementById('add-comm-text')
 
-import { renderComments } from "./rend.js";
-import { comments } from "./API";
-import { fetchAndRender } from "./API";
-import { newComment } from "./API";
+import { renderComments } from "./render.js";
+import { comments } from "./api.js";
+import { fetchAndRender } from "./api.js";
+import { newComment } from "./api.js";
 
 fetchAndRender();
 

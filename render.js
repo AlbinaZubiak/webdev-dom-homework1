@@ -1,4 +1,4 @@
-import { comments } from "./API.js";
+import { comments } from "./api.js";
 import { initEventListeners } from "./index.js";
 
 export const renderComments = () => {
