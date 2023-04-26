@@ -2,9 +2,9 @@ import { comments } from "./api.js";
 import { initEventListeners } from "./index.js";
 
 export const renderComments = () => {
-    const commentListElement = document.getElementById("comment-list");
-    const commentsHtml = comments.map((comment, index) => {
-        return `<li class="comment">
+  const commentListElement = document.getElementById("comment-list");
+  const commentsHtml = comments.map((comment, index) => {
+    return `<li class="comment">
       <div class="comment-header">
         <div>${comment.name}</div>
         <div>${comment.date}</div>
@@ -19,9 +19,9 @@ export const renderComments = () => {
         </div>
       </div>
     </li>`;
-    })
-        .join("");
+  })
+    .join("");
 
-    commentListElement.innerHTML = commentsHtml;
-    initEventListeners();
+  commentListElement.innerHTML = commentsHtml;
+  initEventListeners();
 };
