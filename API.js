@@ -1,83 +1,63 @@
-const buttonElement = document.getElementById("button-form");
-const inputNameElement = document.getElementById("input-name");
-const textareaElement = document.getElementById("textarea-form");
-const commentListElement = document.getElementById("comment-list");
-// const addCommText = document.getElementById('addComments');
-// const addCommElement = document.getElementById('add-comm-text')
-
-import { renderComments } from "./render.js";
-
-export let comments = [];
-
-export const fetchAndRender = () => {
-    return fetch(
-        "https://webdev-hw-api.vercel.app/api/v1/zubiak-albina/comments",
-        {
-            method: "GET",
-        }
-    )
-        .then((response) => response.json())
-        .then((responseData) => {
-            const locale = "ru-RU";
-            let todayData = { day: "numeric", month: "numeric", year: "2-digit" };
-            let todayTime = { hour: "numeric", minute: "2-digit" };
-            let userDate = new Date();
-            comments = responseData.comments.map((comment) => {
-                return {
-                    name: comment?.author?.name,
-                    date: `${userDate.toLocaleDateString(locale, todayData)} ${userDate.toLocaleTimeString(locale, todayTime)}`,
-                    text: comment.text,
-                    likes: comment.likes,
-                    isLiked: false,
-                };
-            });
-            renderComments();
-        });
+export function getComments({ token }) {
+    return fetch("https://webdev-hw-api.vercel.app/api/v2/zubiak-albina/comments", {
+        method: "GET",
+        headers: {
+            Authorization: token,
+        },
+    })
+        .then((response) => {
+            if (response.status === 401) {
+                throw new Error('Нет авторизации');
+            }
+            return response.json()
+        })
 };
 
-export const newComment = () => {
-    const locale = "ru-RU";
-    let todayData = { day: "numeric", month: "numeric", year: "2-digit" };
-    let todayTime = { hour: "numeric", minute: "2-digit" };
-    let userDate = new Date();
-
-    fetch("https://webdev-hw-api.vercel.app/api/v1/zubiak-albina/comments", {
+export function postComments({ token, text, name, date }) {
+    return fetch("https://webdev-hw-api.vercel.app/api/v2/zubiak-albina/comments", {
         method: "POST",
         body: JSON.stringify({
-            name: inputNameElement.value,
-            text: textareaElement.value,
-            date: `${userDate.toLocaleDateString(
-                locale,
-                todayData
-            )} ${userDate.toLocaleTimeString(locale, todayTime)}`,
+            name,
+            text,
+            date,
             likes: 0,
             isLiked: false,
         }),
+        headers: {
+            Authorization: token,
+        },
+    }).then((response) => {
+        return response.json();
     })
-        .then((response) => {
-            if (response.status === 500) {
-                return Promise.reject(new Error("Сервер упал"));
-            } else if (response.status === 400) {
-                return Promise.reject(new Error("Неправильный ввод"));
-            } else {
-                return fetchAndRender();
-            }
-        })
-        .then(() => {
-            buttonElement.disabled = false;
-            //buttonElement.textContent = "Написать";
-            inputNameElement.value = "";
-            textareaElement.value = "";
-        })
-        .catch((error) => {
-            buttonElement.disabled = false;
-            if (error.message === "Сервер упал") {
-                return newComment();
-            }
-            if (error.message === "Неправильный ввод") {
-                alert("Имя и комментарий должны быть не короче 3 символов");
-            } else {
-                alert("Кажется, у вас сломался интернет, попробуйте позже");
-            }
-        });
+};
+
+export function loginUser({ login, password }) {
+    return fetch("https://webdev-hw-api.vercel.app/api/user/login", {
+        method: "POST",
+        body: JSON.stringify({
+            login,
+            password
+        }),
+    }).then((response) => {
+        if (response.status === 400) {
+            throw new Error('Неверный логин или пароль')
+        }
+        return response.json();
+    })
+};
+
+export function regUser({ login, password, name }) {
+    return fetch("https://webdev-hw-api.vercel.app/api/user", {
+        method: "POST",
+        body: JSON.stringify({
+            login,
+            password,
+            name,
+        }),
+    }).then((response) => {
+        if (response.status === 400) {
+            throw new Error('Такой пользователь уже существует')
+        }
+        return response.json();
+    })
 };
