@@ -18,6 +18,7 @@ const fetchAndRender = () => {
         let todayTime = { hour: "numeric", minute: "2-digit" };
         let userDate = new Date();
         comments = responseData.comments.map((comment) => {
+            let commentDate = new Date(comment.date);
             return {
                 name: comment?.author?.name,
                 date: `${userDate.toLocaleDateString(
