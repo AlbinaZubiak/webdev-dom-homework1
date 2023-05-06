@@ -5,26 +5,29 @@
 
 import { getComments, postComments } from "./api.js";
 import { renderLoginComponent } from "./login-components.js";
+const blokID = document.getElementById("ppa")
+const forma = document.getElementById("forma")
 
 let comments = [];
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 
 token = null;
 
+
+
 const fetchAndRender = () => {
     return getComments({ token }).then((responseData) => {
         const locale = "ru-RU";
         let todayData = { day: "numeric", month: "numeric", year: "2-digit" };
         let todayTime = { hour: "numeric", minute: "2-digit" };
-        let userDate = new Date();
         comments = responseData.comments.map((comment) => {
             let commentDate = new Date(comment.date);
             return {
                 name: comment?.author?.name,
-                date: `${userDate.toLocaleDateString(
+                date: `${commentDate.toLocaleDateString(
                     locale,
                     todayData
-                )} ${userDate.toLocaleTimeString(locale, todayTime)}`,
+                )} ${commentDate.toLocaleTimeString(locale, todayTime)}`,
                 text: comment.text,
                 likes: comment.likes,
                 isLiked: false,
@@ -34,7 +37,7 @@ const fetchAndRender = () => {
     });
 };
 
-const renderApp = () => {
+function renderApp() {
     const appElement = document.getElementById("app");
     const commentsHtml = comments
         .map((comment, index) => {
@@ -61,34 +64,21 @@ const renderApp = () => {
     <!--список в JS-->     
     ${commentsHtml}   
       </ul>  
-      <article class="add-form">
-        <input
-          id="input-name"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"/>
-    <textarea
-          id="textarea-form"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш комментарий"
-          rows="4"></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button" id="button-form">Написать</button>
-        </div>
-      </article>
+      
     </main>`;
 
+    if (!token) {
+
+        renderLoginComponent({
+            blokID, setToken: (newToken) => {
+                token = newToken;
+            }, fetchAndRender, forma
+        })
+        //return
+    }
     appElement.innerHTML = appHtml;
 
-    if (!token) {
-        renderLoginComponent({
-            appElement, setToken: (newToken) => {
-                token = newToken;
-            }, fetchAndRender,
-        })
-        return;
-    }
+
 
     const buttonElement = document.getElementById("button-form");
     const inputNameElement = document.getElementById("input-name");
@@ -102,46 +92,70 @@ const renderApp = () => {
 
         postComments({
             token,
-            name: inputNameElement.value,
+            //name: inputNameElement.value,
             text: textareaElement.value,
-            date: `${userDate.toLocaleDateString(
-                locale,
-                todayData
-            )} ${userDate.toLocaleTimeString(locale, todayTime)}`,
+            // date: `${userDate.toLocaleDateString(
+            //     locale,
+            //     todayData
+            // )} ${userDate.toLocaleTimeString(locale, todayTime)}`,
         })
             .then((response) => {
-                if (response.status === 500) {
-                    return Promise.reject(new Error("Сервер упал"));
-                } else if (response.status === 400) {
-                    return Promise.reject(new Error("Неправильный ввод"));
-                } else {
-                    return fetchAndRender();
+                console.log(response) // vidim  ошибка в объекте
+                if (response.status === 400) {
+                    throw new Error("Неправильный ввод");
+                    //  return Promise.reject(new Error("Неправильный ввод"));
                 }
+                if (response.status === 500) {
+                    throw new Error("Сервер упал");
+                }
+
+                console.log("message successful send");
+                return response.json();
             })
-            .then(() => {
+            .then((response) => {
+                console.log(response)
+
+
+                //return response.json();
+                return fetchAndRender();
+            }).then(() => {
                 buttonElement.disabled = false;
                 inputNameElement.value = "";
                 textareaElement.value = "";
             })
             .catch((error) => {
+                console.log(error.message)
                 buttonElement.disabled = false;
-                if (error.message === "Сервер упал") {
-                    return newComment();
+
+                switch (error.message) {
+                    case "Неправильный ввод":
+                        alert("Имя и комментарий должны быть не короче 3 символов");
+                        break;
+                    case "Сервер упал":
+                        alert("Сервер упал")
+                        break;
+                    default:
+                        alert("Кажется, у вас сломался интернет, попробуйте позже");
+                        break;
                 }
-                if (error.message === "Неправильный ввод") {
-                    alert("Имя и комментарий должны быть не короче 3 символов");
-                } else {
-                    alert("Кажется, у вас сломался интернет, попробуйте позже");
-                }
+                // if (error.message === "Сервер упал") {
+                //     return newComment();
+                // }
+                // if (error.message === "Неправильный ввод") {
+                //     alert("Имя и комментарий должны быть не короче 3 символов");
+                // } else {
+                //     alert("Кажется, у вас сломался интернет, попробуйте позже");
+                // }
             });
     };
     buttonElement.addEventListener("click", newComment);
     initEventListeners();
 };
-renderApp();
+//renderApp();
+fetchAndRender();
 
 // лайки
-const initEventListeners = () => {
+function initEventListeners() {
     const likeButtonElements = document.querySelectorAll(".like-button");
 
     for (const likeButtonElement of likeButtonElements) {
@@ -161,4 +175,4 @@ const initEventListeners = () => {
     }
 };
 // fetchAndRender();
-initEventListeners();
+//initEventListeners();

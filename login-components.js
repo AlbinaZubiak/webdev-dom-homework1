@@ -1,7 +1,7 @@
 import { loginUser } from "./api.js";
 import { regUser } from "./api.js";
 
-export function renderLoginComponent({ appElement, setToken, fetchAndRender }) {
+export function renderLoginComponent({ blokID, setToken, fetchAndRender, forma }) {
     let isLoginMode = false;
 
     const renderForm = () => {
@@ -25,7 +25,7 @@ export function renderLoginComponent({ appElement, setToken, fetchAndRender }) {
         </div>
     </div>`;
 
-        appElement.innerHTML = appHtml;
+        blokID.innerHTML = appHtml;
         document.getElementById("login-button").addEventListener("click", () => {
             const login = document.getElementById("login-input").value;
             const password = document.getElementById("password-input").value;
@@ -44,6 +44,8 @@ export function renderLoginComponent({ appElement, setToken, fetchAndRender }) {
                 })
                     .then((user) => {
                         console.log(user);
+                        forma.classList.remove("-display-none")
+                        blokID.classList.add("-display-none")
                         setToken(`Bearer ${user.user.token}`);
                         fetchAndRender();
                     })
@@ -74,6 +76,8 @@ export function renderLoginComponent({ appElement, setToken, fetchAndRender }) {
                     name: name,
                 })
                     .then((user) => {
+                        forma.classList.remove("-display-none")
+                        blokID.classList.add("-display-none")
                         setToken(`Bearer ${user.user.token}`);
                         fetchTodosAndRender();
                     })

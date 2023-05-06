@@ -1,4 +1,5 @@
 export function getComments({ token }) {
+
     return fetch("https://webdev-hw-api.vercel.app/api/v2/zubiak-albina/comments", {
         method: "GET",
         headers: {
@@ -13,21 +14,21 @@ export function getComments({ token }) {
         })
 };
 
-export function postComments({ token, text, name, date }) {
-    return fetch("https://webdev-hw-api.vercel.app/api/v2/zubiak-albina/comments", {
+export function postComments({ token, text }) {
+
+    return fetch('https://webdev-hw-api.vercel.app/api/v2/zubiak-albina/comments', {
         method: "POST",
-        body: JSON.stringify({
-            name,
-            text,
-            date,
-            likes: 0,
-            isLiked: false,
-        }),
         headers: {
             Authorization: token,
         },
-    }).then((response) => {
-        return response.json();
+        body: JSON.stringify({
+            // name,
+            text,
+            // date,
+            // likes: 0,
+            // isLiked: false,
+        }),
+
     })
 };
 
