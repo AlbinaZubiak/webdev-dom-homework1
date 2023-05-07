@@ -3,10 +3,10 @@
 // const textareaElement = document.getElementById("textarea-form");
 // const commentListElement = document.getElementById("comment-list");
 
-import { getComments, postComments } from "./api.js";
+import { getComments, postComments } from "./API.js";
 import { renderLoginComponent } from "./login-components.js";
-const blokID = document.getElementById("ppa")
-const forma = document.getElementById("forma")
+//const blokID = document.getElementById("ppa")
+//const forma = document.getElementById("forma")
 
 let comments = [];
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
@@ -64,21 +64,34 @@ function renderApp() {
     <!--список в JS-->     
     ${commentsHtml}   
       </ul>  
-      
+      <article class="add-form">
+      <input
+        id="input-name"
+        type="text"
+        class="add-form-name"
+        placeholder="Введите ваше имя"/>
+  <textarea
+        id="textarea-form"
+        type="textarea"
+        class="add-form-text"
+        placeholder="Введите ваш комментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button" id="button-form">Написать</button>
+      </div>
+    </article>
     </main>`;
 
-    if (!token) {
-
-        renderLoginComponent({
-            blokID, setToken: (newToken) => {
-                token = newToken;
-            }, fetchAndRender, forma
-        })
-        //return
-    }
     appElement.innerHTML = appHtml;
 
-
+    if (!token) {
+        renderLoginComponent({
+            appElement, setToken: (newToken) => {
+                token = newToken;
+            }, fetchAndRender, //forma
+        })
+        return;
+    }
 
     const buttonElement = document.getElementById("button-form");
     const inputNameElement = document.getElementById("input-name");
@@ -92,12 +105,9 @@ function renderApp() {
 
         postComments({
             token,
-            //name: inputNameElement.value,
+            name: inputNameElement.value,
             text: textareaElement.value,
-            // date: `${userDate.toLocaleDateString(
-            //     locale,
-            //     todayData
-            // )} ${userDate.toLocaleTimeString(locale, todayTime)}`,
+            date: `${userDate.toLocaleDateString(locale, todayData)} ${userDate.toLocaleTimeString(locale, todayTime)}`,
         })
             .then((response) => {
                 console.log(response) // vidim  ошибка в объекте
@@ -108,15 +118,6 @@ function renderApp() {
                 if (response.status === 500) {
                     throw new Error("Сервер упал");
                 }
-
-                console.log("message successful send");
-                return response.json();
-            })
-            .then((response) => {
-                console.log(response)
-
-
-                //return response.json();
                 return fetchAndRender();
             }).then(() => {
                 buttonElement.disabled = false;
@@ -151,8 +152,8 @@ function renderApp() {
     buttonElement.addEventListener("click", newComment);
     initEventListeners();
 };
-//renderApp();
-fetchAndRender();
+renderApp();
+//fetchAndRender();
 
 // лайки
 function initEventListeners() {
@@ -175,4 +176,4 @@ function initEventListeners() {
     }
 };
 // fetchAndRender();
-//initEventListeners();
+initEventListeners();
